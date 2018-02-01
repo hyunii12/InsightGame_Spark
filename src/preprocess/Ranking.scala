@@ -3,7 +3,7 @@ package preprocess
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
 
-object ranking {
+object Ranking {
   def main(args: Array[String]): Unit = {
 
     val sc = new SparkContext(new SparkConf().setAppName("ranking"))
