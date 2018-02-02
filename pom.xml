@@ -15,33 +15,48 @@
 		
 		<pluginManagement>
 			<plugins>
-			
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>../deploy</outputDirectory>
-							<finalName>${project.artifactId}</finalName>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>2.3</version>
+            <configuration>
+                <createDependencyReducedPom>false</createDependencyReducedPom>
+            </configuration>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-shade-plugin</artifactId> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<phase>package</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>shade</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<outputDirectory>../deploy</outputDirectory> -->
+<!-- 							<finalName>${project.artifactId}</finalName> -->
+<!-- 							<filters> -->
+<!-- 								<filter> -->
+<!-- 									<artifact>*:*</artifact> -->
+<!-- 									<excludes> -->
+<!-- 										<exclude>META-INF/*.SF</exclude> -->
+<!-- 										<exclude>META-INF/*.DSA</exclude> -->
+<!-- 										<exclude>META-INF/*.RSA</exclude> -->
+<!-- 									</excludes> -->
+<!-- 								</filter> -->
+<!-- 							</filters> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 			
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
@@ -111,12 +126,26 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.11</artifactId>
 			<version>2.2.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.scala-lang</groupId>
+					<artifactId>scala-library</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-	    <!-- https://mvnrepository.com/artifact/org.openkoreantext/open-korean-text -->
-		<dependency>
-		    <groupId>org.openkoreantext</groupId>
-		    <artifactId>open-korean-text</artifactId>
-		    <version>2.1.2</version>
-		</dependency>
+		  <dependency>
+		    <groupId>com.twitter.penguin</groupId>
+		    <artifactId>korean-text</artifactId>
+		    <version>4.4</version>
+		  </dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala-library</artifactId>
+				<version>2.11.0</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
