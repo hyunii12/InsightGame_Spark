@@ -10,21 +10,19 @@ object tgdContents {
   def main(args: Array[String]): Unit = {
     val sc = new SparkContext(new SparkConf().setAppName("InsightGameSpark"));
     val file = sc.textFile("/tgd/board_tgd.txt").map(line => line.split('\n'));
+    
     val rdd = file.map(data => data.flatMap(attr => attr.split(",")));
 
-//    val rdd_filtered = rdd.filter(data => data(1) == java.time.LocalDate.now.toString);
-    val rdd_filtered = rdd.filter(data => data(1) == "2018-01-29");
-     
+    val rdd_filtered = rdd.filter(data => data(1) == java.time.LocalDate.now.toString);
     val rdd2 = rdd_filtered.map(data => data(2) + data(3));
-    val normalized: CharSequence = TwitterKoreanProcessor.normalize(rdd2.collect());
-    val tokens: Seq[KoreanToken] = TwitterKoreanProcessor.tokenize(normalized)
     
-    val tokensRdd = sc.parallelize(tokens);
-    val result = tokensRdd.map(data => (data, 1));
-    
-    result.collect.take(10);
-    
-    result.coalesce(1).saveAsTextFile("/result_spark/tgd2222");
+    val normalized = rdd2.map( data => TwitterKoreanProcessor.normalize(data) )
+    val tokens = normalized.flatMap(data => TwitterKoreanProcessor.tokenize(data))
+    val tok_filtered = tokens.filter(d => (d.pos).toString contains("Noun"));
+    val tgdMap = tok_filtered.map(data => (data.text, 1));
+    val tgdMapReduced = tgdMap.reduceByKey(_+_)
+    val result = tgdMapReduced.map{ case (k, v) => Array(k, v).mkString(" ")};
+    result.saveAsTextFile("/result_spark/tgdContents");
 
   }
 }
