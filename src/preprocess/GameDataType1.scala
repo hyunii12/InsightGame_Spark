@@ -11,4 +11,7 @@ object GameDataType1 {
     val gnameMap_result = gnameMap.map{ case (k, v) => Array(k, v).mkString(",")};
     gnameMap_result.coalesce(1).saveAsTextFile("/result_spark/"+args(1));
   }
+  
+  def ltrim(s: String) = s.replaceAll("^\\s+", "")
+  def rtrim(s: String) = s.replaceAll("\\s+$", "")
 }
