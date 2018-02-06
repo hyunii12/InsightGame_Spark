@@ -10,7 +10,11 @@ object newsMeca {
     val sc = new SparkContext(new SparkConf().setAppName("InsightGameSpark"));
     val file = sc.textFile("/tgd/board_tgd.txt").flatMap(line => line.split('\n'));
     val rdd = file.map(data => data.split(","));
-    val rdd_filtered = rdd.filter(data => data(2) == java.time.LocalDate.now.toString);
+    
+    var date = java.time.LocalDate.now.toString;      
+    if(args(0) != null || args(0) != "")
+      date = args(0);
+    val rdd_filtered = rdd.filter(data => data(2) == date);
     val rdd2 = rdd_filtered.map(data => data(0) + data(1));
     val normalized = rdd2.map( data => TwitterKoreanProcessor.normalize(data) )
     val tokens = normalized.flatMap(data => TwitterKoreanProcessor.tokenize(data))

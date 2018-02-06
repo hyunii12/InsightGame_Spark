@@ -8,12 +8,15 @@ import com.twitter.penguin.korean.tokenizer.KoreanTokenizer.KoreanToken
 
 object tgdContents {
   def main(args: Array[String]): Unit = {
+    
     val sc = new SparkContext(new SparkConf().setAppName("InsightGameSpark"));
     val file = sc.textFile("/tgd/board_tgd.txt").map(line => line.split('\n'));
     
     val rdd = file.map(data => data.flatMap(attr => attr.split(",")));
-
-    val rdd_filtered = rdd.filter(data => data(1) == java.time.LocalDate.now.toString);
+    var date = java.time.LocalDate.now.toString;      
+    if(args(0) != null || args(0) != "")
+      date = args(0);
+    val rdd_filtered = rdd.filter(data => data(1) == date);
     val rdd2 = rdd_filtered.map(data => data(2) + data(3));
     
     val normalized = rdd2.map( data => TwitterKoreanProcessor.normalize(data) )

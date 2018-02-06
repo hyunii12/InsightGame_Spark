@@ -23,8 +23,11 @@ object Ranking {
     val ranking_all = sc.union(rankings)
 
     val ranking_arr = ranking_all.map(data => data.split(","))
-
-    val ranking_rdd = ranking_arr.filter(data => data(0) == java.time.LocalDate.now.toString)
+    
+    var date = java.time.LocalDate.now.toString;      
+    if(args(0) != null || args(0) != "")
+      date = args(0);
+    val ranking_rdd = ranking_arr.filter(data => data(0) == date)
 
     val ranking_rdd2 = ranking_rdd.map(data => (data(2), data(1)))
 
