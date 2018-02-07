@@ -1,10 +1,9 @@
-package preprocess
+package mapreducer
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import com.twitter.penguin.korean.TwitterKoreanProcessor
-import com.twitter.penguin.korean.phrase_extractor.KoreanPhraseExtractor.KoreanPhrase
-import com.twitter.penguin.korean.tokenizer.KoreanTokenizer.KoreanToken
+import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
 
 object tgdContents {
   def main(args: Array[String]): Unit = {
@@ -24,7 +23,7 @@ object tgdContents {
     val tgdWords = tok_filtered.map(data => (data.text, 1.toDouble));
     val tgdWordsReduced = tgdWords.reduceByKey(_+_);
     val result = tgdWordsReduced.map{ case (k, v) => Array(k, v).mkString(", ")};
-    result.saveAsTextFile("/result_spark/tgdContents"+date);
+    result.saveAsTextFile("/result_spark/tgdContents/tgdContents_"+date);
     
     // 이제 리듀서 만들자..........
     val game1 = sc.textFile("/data/predata/pre_gamenames.txt");
@@ -40,6 +39,6 @@ object tgdContents {
     val reducedRdd = resultRdd.map{case (k,v) => (k, v._1*v._2)}
     val reducedFilteredRdd = reducedRdd.filter{ case (k,v) => v != 1.0 }
     val reducedResult = reducedFilteredRdd.map{ case (k,v) => Array(k, v).mkString(", ")};
-    reducedResult.saveAsTextFile("/result_spark/issues_news"+date);
+    reducedResult.saveAsTextFile("/result_spark/issues/issues_tgdContents" + date);
   }
 }

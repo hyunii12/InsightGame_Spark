@@ -31,7 +31,7 @@ object newsIssues {
     val newsSortedByValue = newsWordsReduced.map(item => item.swap).sortByKey(false, 1).map(item => item.swap);
     val newsWordsResult = newsSortedByValue.map{ case (k, v) => Array(k, v).mkString(", ")};
     // 매퍼 저장
-    newsWordsResult.saveAsTextFile("/result_spark/news_meca_"+date);
+    newsWordsResult.saveAsTextFile("/result_spark/news/news_"+date);
 
     
     // predata에서 pre_gamenames.txt랑 game_weights.txt 합쳐서 게임 딕셔너리 만들기: (키,벨류) 매퍼 형태로
@@ -49,7 +49,7 @@ object newsIssues {
     val reducedRdd = resultRdd.map{case (k,v) => (k, v._1*v._2)}
     val reducedFilteredRdd = reducedRdd.filter{ case (k,v) => v != 1.0 }
     val reducedResult = reducedFilteredRdd.map{ case (k,v) => Array(k, v).mkString(", ")};
-    reducedResult.saveAsTextFile("/result_spark/issues_news"+date);
+    reducedResult.saveAsTextFile("/result_spark/issues/issues_news"+date);
     
   }
 }
