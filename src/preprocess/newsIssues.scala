@@ -41,6 +41,11 @@ object newsIssues {
     val gameDic = gameMap.map(data => (data(0), data(1).toDouble))
     
     // 리듀싱 하기: newsWordsReduced: RDD[(String, Int)] & gameDic: RDD[(String, Double)]
-    val resultRdd = newsWordsReduced.join(gameDic).distinct();
+    val resultRdd = newsWordsReduced.join(gameDic);
+    val reducedRdd = resultRdd.map{case (k,v) => (k, v._1*v._2)}
+    val reducedFilteredRdd = reducedRdd.filter{ case (k,v) => v != 1.0 }
+    val reducedResult = reducedFilteredRdd.map{ case (k,v) => Array(k, v).mkString(", ")};
+    reducedResult.saveAsTextFile("/result_spark/issues_news"+date);
+    
   }
 }
