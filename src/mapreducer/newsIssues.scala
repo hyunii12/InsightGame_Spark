@@ -1,8 +1,10 @@
-package preprocess
+package mapreducer
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import com.twitter.penguin.korean.TwitterKoreanProcessor
+import org.apache.spark.rdd.RDD.rddToOrderedRDDFunctions
+import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
 
 object newsIssues {
   def main(args: Array[String]): Unit = {
@@ -35,9 +37,9 @@ object newsIssues {
     // predata에서 pre_gamenames.txt랑 game_weights.txt 합쳐서 게임 딕셔너리 만들기: (키,벨류) 매퍼 형태로
     val game1 = sc.textFile("/data/predata/pre_gamenames.txt");
     val game2 = sc.textFile("/data/predata/game_weights.txt");
-    val result = game1.union(game2)
-    val result2 = result.map(data => data.split("\n"))
-    val gameMap = result2.map(data => data(0).split(","))
+    val gameresult = game1.union(game2)
+    val gameresult2 = gameresult.map(data => data.split("\n"))
+    val gameMap = gameresult2.map(data => data(0).split(","))
     val gameDic = gameMap.map(data => (data(0), data(1).toDouble))
     
     // 리듀싱 하기: newsWordsReduced: RDD[(String, Int)] & gameDic: RDD[(String, Double)]
