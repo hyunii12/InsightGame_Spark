@@ -34,7 +34,9 @@ object tgdContents {
     val gameMap = gameresult2.map(data => data(0).split(","))
     val gameDic = gameMap.map(data => (data(0), data(1).toDouble));
     
-    val resultRdd = tgdWordsReduced.join(gameDic);
+    val bcast = sc.broadcast(gameDic.map(_._1).collect());
+    val tgdFilteredBybcast = tgdWordsReduced.filter(r => bcast.value.contains(r._1)); 
+    val resultRdd = tgdFilteredBybcast.join(gameDic);
     val reducedRdd = resultRdd.map{case (k,v) => (k, v._1*v._2)}
     val reducedFilteredRdd = reducedRdd.filter{ case (k,v) => v != 1.0 }
     val reducedResult = reducedFilteredRdd.map{ case (k,v) => Array(k, v).mkString(", ")};
