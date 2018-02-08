@@ -15,12 +15,12 @@ object newsIssues {
     val mecaRdd = file_news_meca.map(_.split(","));
     val invenRdd = file_news_inven.map(_.split("§§"));
     val newsRdd = mecaRdd.union(invenRdd);
-    
+    val newsRdd2 = newsRdd.filter(data => data.length == 3);
     var date = java.time.LocalDate.now.toString;      
     if(args(0) != null || args(0) != "")
       date = args(0);
     
-    val rdd_filtered = newsRdd.filter(data => data(2) == date);
+    val rdd_filtered = newsRdd2.filter(data => data(2) == date);
     val rdd = rdd_filtered.map(data => data(0) + data(1));
 //    import com.twitter.penguin.korean.TwitterKoreanProcessor
     val normalized = rdd.map( data => TwitterKoreanProcessor.normalize(data) )
