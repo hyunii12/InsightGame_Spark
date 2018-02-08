@@ -18,7 +18,7 @@ object ruriContents {
     var boardRdd = board.flatMap(_.split("\n")).map(_.split("§§"));
     
     var file_1 = sc.textFile("/ruri/3ds_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
-    var file_2 = sc.textFile("/ruri/PC_info.txt").flatMap(_.split("\n")).map(_.split("§§"));;
+    var file_2 = sc.textFile("/ruri/PC_info.txt").flatMap(_.split("\n")).map(_.split("§§★§★§§"));;
     var file_3 = sc.textFile("/ruri/PS4_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
     var file_4 = sc.textFile("/ruri/PSvista_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
     var file_5 = sc.textFile("/ruri/Switch_info.txt").flatMap(_.split("\n")).map(_.split("§§"));

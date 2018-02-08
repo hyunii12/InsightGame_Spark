@@ -47,17 +47,17 @@ object ruriInfo {
     // predata에서 pre_gamenames.txt랑 game_weights.txt 합쳐서 게임 딕셔너리 만들기: (키,벨류) 매퍼 형태로
     val game1 = sc.textFile("/data/predata/pre_gamenames.txt");
     val game2 = sc.textFile("/data/predata/game_weights.txt");
-    val gameresult = game1.union(game2)
-    val gameresult2 = gameresult.map(data => data.split("\n"))
-    val gameMap = gameresult2.map(data => data(0).split(","))
-    val gameDic = gameMap.map(data => (data(0), data(1).toDouble))
+    val gameresult = game1.union(game2);
+    val gameresult2 = gameresult.map(data => data.split("\n"));
+    val gameMap = gameresult2.map(data => data(0).split(","));
+    val gameDic = gameMap.map(data => (data(0), data(1).toDouble));
     
     // 리듀싱 하기: newsWordsReduced: RDD[(String, Int)] & gameDic: RDD[(String, Double)]
     val bcast = sc.broadcast(gameDic.map(_._1).collect());
     val infoFilteredBybcast = infoWordsReduced.filter(r => bcast.value.contains(r._1)); 
     val resultRdd = infoFilteredBybcast.join(gameDic);
-    val reducedRdd = resultRdd.map{case (k,v) => (k, v._1*v._2)}
-    val reducedFilteredRdd = reducedRdd.filter{ case (k,v) => v != 1.0 }
+    val reducedRdd = resultRdd.map{case (k,v) => (k, v._1*v._2)};
+    val reducedFilteredRdd = reducedRdd.filter{ case (k,v) => v != 1.0 };
     val reducedResult = reducedFilteredRdd.map{ case (k,v) => Array(k, v).mkString(", ")};
     reducedResult.saveAsTextFile("/result_spark/issues/issues_info"+date);
     
