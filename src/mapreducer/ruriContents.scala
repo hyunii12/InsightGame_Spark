@@ -24,14 +24,14 @@ object ruriContents {
     var file_5 = sc.textFile("/ruri/Switch_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
     var file_6 = sc.textFile("/ruri/Xbox_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
     var file_7 = sc.textFile("/ruri/mobile_android_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
-    val info = sc.union(Seq(file1, file2, file3, file4, file5, file6, file7));
-    val ruri = board.union(info);
+    val info = sc.union(Seq(file_1, file_2, file_3, file_4, file_5, file_6, file_7));
+    val ruri = boardRdd.union(info);
     
     val rdd = ruri.filter(data => data.length == 3);
     var date = java.time.LocalDate.now.toString;
     if (args(0) != null || args(0) != "")
       date = args(0);
-    val rdd_filtered = boardRdd.filter(data => data(2) == date);
+    val rdd_filtered = rdd.filter(data => data(2) == date);
     val rdd2 = rdd_filtered.map(data => data(0) + data(1));
 
     val normalized = rdd2.map(data => TwitterKoreanProcessor.normalize(data))
@@ -52,12 +52,12 @@ object ruriContents {
     val gameMap = gameresult2.map(data => data(0).split(","))
     val gameDic = gameMap.map(data => (data(0), data(1).toDouble))
 
-    // 리듀싱 하기: newsWordsReduced: RDD[(String, Int)] & gameDic: RDD[(String, Double)]
+    // 리듀싱 하기: ruriWordsReduced: RDD[(String, Int)] & gameDic: RDD[(String, Double)]
     val bcast = sc.broadcast(gameDic.map(_._1).collect());
     val ruriFilteredBybcast = ruriWordsReduced.filter(r => bcast.value.contains(r._1));
     val resultRdd = ruriFilteredBybcast.join(gameDic);
     val reducedRdd = resultRdd.map { case (k, v) => (k, v._1 * v._2) }
-    val reducedFilteredRdd = reducedRdd.filter { case (k, v) => v != 1.0 }
+    val reducedFilteredRdd = reducedRdd.filter { case (k, v) => v != 1.0 }.map(item => item.swap).sortByKey(false, 1).map(item => item.swap);
     val reducedResult = reducedFilteredRdd.map { case (k, v) => Array(k, v).mkString(", ") };
     reducedResult.saveAsTextFile("/result_spark/issues/issues_ruri" + date);
   }
