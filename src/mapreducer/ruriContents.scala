@@ -7,23 +7,23 @@ import com.twitter.penguin.korean.TwitterKoreanProcessor
 object ruriContents {
   def main(args: Array[String]): Unit = {
     val sc = new SparkContext(new SparkConf().setAppName("InsightGameSpark"));
-    var file1 = sc.textFile("/ruri/3ds_board.txt") 
-    var file2 = sc.textFile("/ruri/PC_board.txt") 
-    var file3 = sc.textFile("/ruri/PS4_board.txt") 
-    var file4 = sc.textFile("/ruri/PSvista_board.txt") 
-    var file5 = sc.textFile("/ruri/Switch_board.txt") 
-    var file6 = sc.textFile("/ruri/Xbox_board.txt") 
-    var file7 = sc.textFile("/ruri/mobile_board.txt") 
+    var file1 = sc.textFile("hdfs://h1:9000/ruri/3ds_board.txt") 
+    var file2 = sc.textFile("hdfs://h1:9000/ruri/PC_board.txt") 
+    var file3 = sc.textFile("hdfs://h1:9000/ruri/PS4_board.txt") 
+    var file4 = sc.textFile("hdfs://h1:9000/ruri/PSvista_board.txt") 
+    var file5 = sc.textFile("hdfs://h1:9000/ruri/Switch_board.txt") 
+    var file6 = sc.textFile("hdfs://h1:9000/ruri/Xbox_board.txt") 
+    var file7 = sc.textFile("hdfs://h1:9000/ruri/mobile_board.txt") 
     val board = sc.union(Seq(file1, file2, file3, file4, file5, file6, file7));
     var boardRdd = board.flatMap(_.split("\n")).map(_.split("§§"));
     
-    var file_1 = sc.textFile("/ruri/3ds_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
-    var file_2 = sc.textFile("/ruri/PC_info.txt").flatMap(_.split("\n")).map(_.split("§§★§★§§"));;
-    var file_3 = sc.textFile("/ruri/PS4_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
-    var file_4 = sc.textFile("/ruri/PSvista_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
-    var file_5 = sc.textFile("/ruri/Switch_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
-    var file_6 = sc.textFile("/ruri/Xbox_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
-    var file_7 = sc.textFile("/ruri/mobile_android_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
+    var file_1 = sc.textFile("hdfs://h1:9000/ruri/3ds_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
+    var file_2 = sc.textFile("hdfs://h1:9000/ruri/PC_info.txt").flatMap(_.split("\n")).map(_.split("§§★§★§§"));;
+    var file_3 = sc.textFile("hdfs://h1:9000/ruri/PS4_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
+    var file_4 = sc.textFile("hdfs://h1:9000/ruri/PSvista_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
+    var file_5 = sc.textFile("hdfs://h1:9000/ruri/Switch_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
+    var file_6 = sc.textFile("hdfs://h1:9000/ruri/Xbox_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
+    var file_7 = sc.textFile("hdfs://h1:9000/ruri/mobile_android_info.txt").flatMap(_.split("\n")).map(_.split("§§"));
     val info = sc.union(Seq(file_1, file_2, file_3, file_4, file_5, file_6, file_7));
     val ruri = boardRdd.union(info);
     
