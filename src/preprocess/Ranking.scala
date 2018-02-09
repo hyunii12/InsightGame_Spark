@@ -5,7 +5,6 @@ import org.apache.spark.SparkConf
 
 object Ranking {
   def main(args: Array[String]): Unit = {
-
     val sc = new SparkContext(new SparkConf().setAppName("ranking"))
     // load files on hdfs
     // meca: 1 ~ 50
@@ -27,12 +26,12 @@ object Ranking {
     
     var date = java.time.LocalDate.now.toString;      
     if(args(0) != null || args(0) != "")
-      date = args(0);
+      date = args(0);  
     
     val ranking_rdd = ranking_arr.filter(data => data(0) == date)
     val ranking_rdd2 = ranking_rdd.map(data => (data(2), data(1)))
     val ranking_rdd3 = ranking_rdd2.map{ case (k, v) => Array(k, v).mkString(", ")};
-    ranking_rdd3.coalesce(1).saveAsTextFile("/result_spark/ranking")
+    ranking_rdd3.saveAsTextFile("/result_spark/ranking")
     
     
   }

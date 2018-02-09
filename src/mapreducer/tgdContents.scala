@@ -20,6 +20,8 @@ object tgdContents {
     val normalized = rdd2.map( data => TwitterKoreanProcessor.normalize(data) )
     val tokens = normalized.flatMap(data => TwitterKoreanProcessor.tokenize(data))
     val tok_filtered = tokens.filter(d => (d.pos).toString contains("Noun"));
+//    val tok_filtered = tokens.filter(d => (d.pos).toString contains("Nubmer"));
+//    val tok_filtered = tokens.filter(d => (d.pos).toString contains("Alpha"));
     val tgdWords = tok_filtered.map(data => (data.text, 1.toDouble));
     val tgdWordsReduced = tgdWords.reduceByKey(_+_);
     val result = tgdWordsReduced.map{ case (k, v) => Array(k, v).mkString(", ")};
