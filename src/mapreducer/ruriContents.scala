@@ -36,9 +36,12 @@ object ruriContents {
 
     val normalized = rdd2.map(data => TwitterKoreanProcessor.normalize(data))
     val tokens = normalized.flatMap(data => TwitterKoreanProcessor.tokenize(data))
-    val tok_filtered = tokens.filter(d => (d.pos).toString contains ("Noun"));
+    val tok_filtered = tokens.filter(d => {(d.pos).toString contains "Noun"} 
+      || {(d.pos).toString contains "Number"}
+      || {(d.pos).toString contains "Alpha"});
+//    val tok_filtered = tokens.filter(d => (d.pos).toString contains ("Noun", "Number", "Alpha"));
     val ruriWords = tok_filtered.map(data => (data.text, 1.0));
-    val ruriWordsReduced = ruriWords.reduceByKey(_ + _);
+    val ruriWordsReduced = ruriWords.reduceByKey(_ + _).filter(_._2 > 1.0);
     val ruriSortedByValue = ruriWordsReduced.map(item => item.swap).sortByKey(false, 1).map(item => item.swap);
     val ruriWordsResult = ruriSortedByValue.map { case (k, v) => Array(k, v).mkString(", ") };
     // 매퍼 저장

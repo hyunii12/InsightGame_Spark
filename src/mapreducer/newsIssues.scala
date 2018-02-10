@@ -25,9 +25,11 @@ object newsIssues {
 //    import com.twitter.penguin.korean.TwitterKoreanProcessor
     val normalized = rdd.map( data => TwitterKoreanProcessor.normalize(data) )
     val tokens = normalized.flatMap(data => TwitterKoreanProcessor.tokenize(data))
-    val tok_filtered = tokens.filter(d => (d.pos).toString contains("Noun"));
+    val tok_filtered = tokens.filter(d => {(d.pos).toString contains "Noun"} 
+      || {(d.pos).toString contains "Number"}
+      || {(d.pos).toString contains "Alpha"});
     val newsWords = tok_filtered.map(data => (data.text, 1.0));
-    val newsWordsReduced = newsWords.reduceByKey(_+_);
+    val newsWordsReduced = newsWords.reduceByKey(_+_).filter(data => data._2 > 1.0);
     val newsSortedByValue = newsWordsReduced.map(item => item.swap).sortByKey(false, 1).map(item => item.swap);
     val newsWordsResult = newsSortedByValue.map{ case (k, v) => Array(k, v).mkString(", ")};
     // 매퍼 저장
