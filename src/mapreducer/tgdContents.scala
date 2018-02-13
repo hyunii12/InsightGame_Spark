@@ -25,22 +25,6 @@ object tgdContents {
     val tgdWords = tok_filtered.map(data => (data.text, 1.toDouble));
     val tgdWordsReduced = tgdWords.reduceByKey(_+_);
     val result = tgdWordsReduced.map{ case (k, v) => Array(k, v).mkString(", ")};
-    result.saveAsTextFile("/result_spark/tgdContents/tgdContents_"+date);
-    
-    // 이제 리듀서 만들자..........
-    val game1 = sc.textFile("/data/predata/pre_gamenames.txt");
-    val game2 = sc.textFile("/data/predata/game_weights.txt");
-    val gameresult = game1.union(game2);
-    val gameresult2 = gameresult.map(data => data.split("\n"))
-    val gameMap = gameresult2.map(data => data(0).split(","))
-    val gameDic = gameMap.map(data => (data(0), data(1).toDouble));
-    
-    val bcast = sc.broadcast(gameDic.map(_._1).collect());
-    val tgdFilteredBybcast = tgdWordsReduced.filter(r => bcast.value.contains(r._1)); 
-    val resultRdd = tgdFilteredBybcast.join(gameDic);
-    val reducedRdd = resultRdd.map{case (k,v) => (k, v._1*v._2)}
-    val reducedFilteredRdd = reducedRdd.filter{ case (k,v) => v != 1.0 }
-    val reducedResult = reducedFilteredRdd.map{ case (k,v) => Array(k, v).mkString(", ")};
-    reducedResult.saveAsTextFile("/result_spark/issues/issues_tgdContents" + date);
+    result.saveAsTextFile("/result_spark/users/tgd_contents_"+date);
   }
 }

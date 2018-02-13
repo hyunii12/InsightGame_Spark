@@ -28,30 +28,12 @@ object newsIssues {
     val tok_filtered = tokens.filter(d => {(d.pos).toString contains "Noun"} 
       || {(d.pos).toString contains "Number"}
       || {(d.pos).toString contains "Alpha"});
-    val newsWords = tok_filtered.map(data => (data.text, 1.0));
+    val newsWords = tok_filtered.map(data => (data.text, 1.0)); 
     val newsWordsReduced = newsWords.reduceByKey(_+_).filter(data => data._2 > 1.0);
     val newsSortedByValue = newsWordsReduced.map(item => item.swap).sortByKey(false, 1).map(item => item.swap);
     val newsWordsResult = newsSortedByValue.map{ case (k, v) => Array(k, v).mkString(", ")};
     // 매퍼 저장
     newsWordsResult.saveAsTextFile("/result_spark/news/news_"+date);
 
-    
-    // predata에서 pre_gamenames.txt랑 game_weights.txt 합쳐서 게임 딕셔너리 만들기: (키,벨류) 매퍼 형태로
-    val game1 = sc.textFile("/data/predata/pre_gamenames.txt");
-    val game2 = sc.textFile("/data/predata/game_weights.txt");
-    val gameresult = game1.union(game2)
-    val gameresult2 = gameresult.map(data => data.split("\n"))
-    val gameMap = gameresult2.map(data => data(0).split(","))
-    val gameDic = gameMap.map(data => (data(0), data(1).toDouble))
-    
-    // 리듀싱 하기: newsWordsReduced: RDD[(String, Int)] & gameDic: RDD[(String, Double)]
-    val bcast = sc.broadcast(gameDic.map(_._1).collect());
-    val newsFilteredBybcast = newsWordsReduced.filter(r => bcast.value.contains(r._1)); 
-    val resultRdd = newsFilteredBybcast.join(gameDic);
-    val reducedRdd = resultRdd.map{case (k,v) => (k, v._1*v._2)}
-    val reducedFilteredRdd = reducedRdd.filter{ case (k,v) => v != 1.0 }
-    val reducedResult = reducedFilteredRdd.map{ case (k,v) => Array(k, v).mkString(", ")};
-    reducedResult.saveAsTextFile("/result_spark/issues/issues_news"+date);
-    
   }
 }
