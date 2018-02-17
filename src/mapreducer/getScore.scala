@@ -11,11 +11,11 @@ object getScore {
      * args(0) : news, tgdContents, ruriContents, ranking
      */
     var date = java.time.LocalDate.now.toString;      
-    if(args(1) != null || args(1) != "")
-      date = args(1);
+    if(args(0) != null || args(0) != "")
+      date = args(0);
 //    val file = sc.textFile("/data/issuesdata/issues_"+args(0)+"_"+date).map(_.split(", "));
     val news = sc.textFile("/result_spark/news/news_"+date).map(_.split(", "));
-    val tgds = sc.textFile("/result_spark/user/tgd_contents_"+date).map(_.split(", "));
+    val tgds = sc.textFile("/result_spark/users/tgd_contents_"+date).map(_.split(", "));
     val ruries = sc.textFile("/result_spark/users/ruri_contents_"+date).map(_.split(", "));
     val file = news.union(tgds).union(ruries);
     val fileRdd = file.map(data => new Tuple2(data(0).toLowerCase(), data(1)));
@@ -30,7 +30,7 @@ object getScore {
     
     val gameFile = sc.textFile("/data/rawdata/gameNames").map(_.split(",")).zipWithIndex().map{case (k,v) => (k(0), v)}
     val issueScore2 = gameFile.map{case (a,b) => (b.toString, a.toString)}.join(gameScore).map{ case(k,v) => (k, v._1, v._2)};
-    val issueScore_save = issueScore2.map {case(a,b,c) => Array(a, b, c, date).mkString(", ") };
+    val issueScore_save = issueScore2.map {case(a,b,c) => Array(a, b, c, "news users", date).mkString(", ") };
     issueScore_save.saveAsTextFile("/result_spark/issues/issues_game_score_"+date);
     
   }
