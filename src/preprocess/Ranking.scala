@@ -10,7 +10,7 @@ object Ranking {
     // meca: 1 ~ 50
     // inven: 1 ~ 10
     // ruri: 1 ~ 14
-    val meca_ranking = sc.textFile("/meca/rank_meca.txt")
+    val meca_rank = sc.textFile("/meca/rank_meca.txt")
     val inven_ranking = sc.textFile("/inven/rank_inven.txt")
     val ruri_ranking1 = sc.textFile("/ruri/Ruri_3ds_Ranking.txt")
     val ruri_ranking2 = sc.textFile("/ruri/Ruri_Mobile_Ranking.txt")
@@ -20,6 +20,8 @@ object Ranking {
     val ruri_ranking6 = sc.textFile("/ruri/Ruri_Switch_Ranking.txt")
     val ruri_ranking7 = sc.textFile("/ruri/Ruri_Xbox_Ranking.txt")
 
+	val meca_ranking = meca_rank.filter(data => data(1) < 16)
+	
     val rankings = Seq(meca_ranking, inven_ranking, ruri_ranking1, ruri_ranking2, ruri_ranking3, ruri_ranking4, ruri_ranking5, ruri_ranking6, ruri_ranking7)
     val ranking_all = sc.union(rankings)
     val ranking_arr = ranking_all.map(data => data.split(","))
